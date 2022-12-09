@@ -24,3 +24,19 @@ export const dashboard = {
         }
     ]
 };
+
+export const bookstore = {
+    id: 'bookstore',
+    title: 'Bookstore',
+    type: 'group',
+    children: [
+        {
+            id: 'default',
+            title: 'Bookstore',
+            type: 'item',
+            url: '/bookstore',
+            icon: icons['IconDashboard'],
+            breadcrumbs: false
+        }
+    ]
+};

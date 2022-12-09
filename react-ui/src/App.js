@@ -13,6 +13,7 @@ import theme from './themes';
 // project imports
 import NavigationScroll from './layout/NavigationScroll';
 
+
 //-----------------------|| APP ||-----------------------//
 
 const App = () => {

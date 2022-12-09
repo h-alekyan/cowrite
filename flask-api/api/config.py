@@ -16,3 +16,4 @@ class BaseConfig():
     SECRET_KEY = "flask-app-secret-key-change-it"
     JWT_SECRET_KEY = "jwt-app-secret-key-change-it"
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    PROPAGATE_EXCEPTIONS = True

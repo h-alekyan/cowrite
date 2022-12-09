@@ -12,7 +12,7 @@ from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import db, Users, JWTTokenBlocklist
+from .models import Ownership, Contribution, db, Users, Book, JWTTokenBlocklist
 from .config import BaseConfig
 
 rest_api = Api(version="1.0", title="Users API")
@@ -36,6 +36,11 @@ user_edit_model = rest_api.model('UserEditModel', {"userID": fields.String(requi
                                                    "email": fields.String(required=True, min_length=4, max_length=64)
                                                    })
 
+new_book_model = rest_api.model('NewBookModel', {"title": fields.String(required=True, min_length=2, max_length=125),
+                                              })
+
+get_all_books_model = rest_api.model('AllBooksModel', {"title": fields.String(required=True, min_length=2, max_length=125),
+                                              })                                              
 
 """
    Helper function for JWT token required
@@ -55,8 +60,9 @@ def token_required(f):
             return {"success": False, "msg": "Valid JWT token is missing"}, 400
 
         try:
-            data = jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
+            data = 98 #jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
             current_user = Users.get_by_email(data["email"])
+
 
             if not current_user:
                 return {"success": False,
@@ -190,5 +196,290 @@ class LogoutUser(Resource):
 
         self.set_jwt_auth_active(False)
         self.save()
+
+
+        return {"success": True}, 200
+
+
+
+
+# =================================== BOOK API ENDPOINTS ===============================
+
+@rest_api.route('/api/new-book')
+class NewBook(Resource):
+    """
+       Create a new book using 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(user_edit_model)
+    @token_required
+    def post(self, current_user):
+
+
+        req_data = request.get_json()
+
+        _title = req_data.get("title")
+        _body = req_data.get("body")
+        _description = req_data.get("description")
+
+
+        book = Book(title=_title, body = _body, description = _description, author_id = self.id)
+
+
+        book.save()
+
+
+        return {"success": True}, 200
+
+
+@rest_api.route('/api/update-book')
+class UpdateBook(Resource):
+    """
+       Update a book using 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(user_edit_model)
+    @token_required
+    def post(self, current_user):
+
+        req_data = request.get_json()
+
+        _id = req_data.get("id")
+
+        book = Book.get_by_id(_id)
+
+        if book['author'] != self.id:
+            return {"success": False, "message" : "User not authorized"}, 400
+
+
+
+        _title = req_data.get("title")
+        _body = req_data.get("body")
+        _description = req_data.get("description")
+
+
+        book = Book.get_by_id_raw(_id)
+
+        book.update(new_title=_title, new_body=_body, new_description = _description)
+
+
+        book.save()
+
+
+        return {"success": True}, 200
+
+
+
+
+@rest_api.route('/api/get-all-books')
+class GetAllBooks(Resource):
+    """
+       Create a new book using 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    def get(self):
+
+
+
+        books = Book.get_all()
+
+
+        return {"success": True,
+        "books": books}, 200
+
+
+@rest_api.route('/api/get-user-books')
+class GetUserBooks(Resource):
+    """
+       Get all the books of a given user 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(new_book_model)
+    @token_required
+    def get(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+        
+        query = self.authored_books
+        books = []
+        for book in query:
+            books.append(book.toJSON())
+
+        return {"success": True,
+        "books": books}, 200
+
+
+@rest_api.route('/api/get-book')
+class GetBook(Resource):
+    """
+       Get all the books of a given user 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    def get(self): 
+        _id = request.args.get('book')
+
+        book = Book.get_by_id(_id)
+
+       
+
+        return {"success": True,
+        "book": book}, 200
+
+
+
+#============================== CONTRIBUTION ENDPOINTS 
+
+@rest_api.route('/api/new-contribution')
+class NewContribution(Resource):
+    """
+       Create a new contribution using 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(new_book_model)
+    @token_required
+    def post(self, current_user):
+
+
+        req_data = request.get_json()
+
+        _body = req_data.get("body")
+        _title = req_data.get("title")
+        _book_id = req_data.get('book_id')
+        _description= req_data.get('description')
+
+
+        contribution = Contribution(title = _title, body = _body, book_id=_book_id, contributor_id =self.id, status = "submitted", description = _description)
+
+        contribution.save()
+
+        return {"success": True}, 200
+
+
+@rest_api.route('/api/get-user-contributions')
+class GetUserContributions(Resource):
+    """
+       Get all the contributions of a given user 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(new_book_model)
+    @token_required
+    def get(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        query = self.contributed_books
+        books = []
+        for book in query:
+            books.append(book.toJSON())
+
+        return {"success": True,
+        "books": books}, 200
+
+
+@rest_api.route('/api/get-book-contributions')
+class GetBookContributions(Resource):
+    """
+       Get all the contributions of a given book 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    @token_required
+    def get(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        _id = request.args.get('book')
+        contributions = []
+        
+        book = Book.get_by_id_raw(_id)
+        query = book.contributions
+        print(query)
+        for contribution in query:
+            contributions.append(contribution.toJSON())
+
+        return {"success": True,
+        "contributions": contributions}, 200
+
+@rest_api.route('/api/get-contribution')
+class GetContribution(Resource):
+    """
+       Get all the contributions of a given book 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    #@token_required
+    def get(self): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        _id = request.args.get('contrid')
+        
+        query = Contribution.get_by_id(_id)
+        contribution = query.toJSON()
+       
+        return {"success": True,
+        "contribution": contribution}, 200
+
+@rest_api.route('/api/aprove-contribution')
+class AproveContribution(Resource):
+    """
+       Get all the contributions of a given book 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    @token_required
+    def post(self, curent_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+        
+        
+        req_data = request.get_json()
+
+        
+       
+
+        _bookid = req_data.get("bookid")
+        
+
+        book = Book.get_by_id(_bookid)
+
+        if book['author'] != self.id:
+            return {"success": False, "message" : "User not authorized"}, 400
+
+
+        _title = req_data.get("title")
+        _body = req_data.get("body")
+        _description = req_data.get("description")
+        _contrid = req_data.get("contrid")
+
+
+        book = Book.get_by_id_raw(_bookid)
+
+        book.update(new_title=_title, new_body=_body, new_description = _description)
+
+
+        book.save()
+
+        percentage = 0.4
+
+        new_ownership = Ownership(contributor_id = contribution.contributor_id, book_id = _bookid, percentage = percentage)
+        new_ownership.save()
+
+        contribution = Contribution.get_by_id(_contrid)
+
+        contribution.update_status("approved")
+
 
         return {"success": True}, 200
