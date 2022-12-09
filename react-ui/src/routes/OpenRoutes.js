@@ -12,6 +12,7 @@ const BookstoreMain = Loadable(lazy(() => import('../views/bookstore')));
 const BookPage = Loadable(lazy(() => import('../views/pages/authentication/bookpage')));
 const NewBook = Loadable(lazy(() => import('../views/utilities/NewBook')));
 const AuthRegister = Loadable(lazy(() => import('../views/pages/authentication/register')));
+const GetOwnerships = Loadable(lazy(() => import('../views/utilities/GetOwnerships')));
 
 
 // sample page routing
@@ -27,12 +28,14 @@ const OpenRoutes = () => {
             path={[
                 '/bookstore',
                 '/book',
+                '/get-ownerships'
             ]}
         >
             <OuterLayout>
                 <Switch location={location} key={location.pathname}>
                         <Route path="/bookstore" component={BookstoreMain} />
                         <Route path="/book/:id" component={BookPage} />
+                        <Route path="/get-ownerships/:id" component={GetOwnerships} />
                 </Switch>
             </OuterLayout>
         </Route>

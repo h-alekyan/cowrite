@@ -72,6 +72,8 @@ const MyContributions = ({...others}) => {
 
     const [content, setContent] = useState("")
 
+    console.log(books)
+
 
   return(
       <div>

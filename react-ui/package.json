@@ -21,6 +21,7 @@
         "editor.md": "^1.5.0",
         "formik": "^2.2.6",
         "framer-motion": "^4.1.13",
+        "markdown-diff": "^1.0.9",
         "markdown-it": "^13.0.1",
         "material-ui-popup-state": "^1.8.0",
         "react": "^17.0.2",
@@ -35,6 +36,9 @@
         "react-scripts": "^4.0.3",
         "redux": "^4.0.5",
         "redux-persist": "^6.0.0",
+        "remove-stopwords": "^1.0.3",
+        "stopword": "^2.0.5",
+        "text-diff": "^1.0.1",
         "yup": "^0.32.9"
     },
     "scripts": {

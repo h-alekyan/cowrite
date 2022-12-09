@@ -218,70 +218,19 @@ const ProfileSection = () => {
                                             <Grid item className={classes.flex}>
                                                 <Typography variant="h4">Good Morning,</Typography>
                                                 <Typography component="span" variant="h4" className={classes.name}>
-                                                    John
+                                                    Hovik
                                                 </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
+                                                <Typography variant="subtitle2">Author</Typography>
                                             </Grid>
                                         </Grid>
-                                        <OutlinedInput
-                                            className={classes.searchControl}
-                                            id="input-search-profile"
-                                            value={value}
-                                            onChange={(e) => setValue(e.target.value)}
-                                            placeholder="Search profile options"
-                                            startAdornment={
-                                                <InputAdornment position="start">
-                                                    <IconSearch stroke={1.5} size="1.3rem" className={classes.startAdornment} />
-                                                </InputAdornment>
-                                            }
-                                            aria-describedby="search-helper-text"
-                                            inputProps={{
-                                                'aria-label': 'weight'
-                                            }}
-                                        />
+                                        
                                         <Divider />
                                         <PerfectScrollbar className={classes.ScrollHeight}>
-                                            <UpgradePlanCard />
+                                            
                                             <Divider />
-                                            <Card className={classes.card}>
-                                                <CardContent>
-                                                    <Grid container spacing={3} direction="column">
-                                                        <Grid item>
-                                                            <Grid item container alignItems="center" justifyContent="space-between">
-                                                                <Grid item>
-                                                                    <Typography variant="subtitle1">Start DND Mode</Typography>
-                                                                </Grid>
-                                                                <Grid item>
-                                                                    <Switch
-                                                                        color="primary"
-                                                                        checked={sdm}
-                                                                        onChange={(e) => setSdm(e.target.checked)}
-                                                                        name="sdm"
-                                                                        size="small"
-                                                                    />
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                        <Grid item>
-                                                            <Grid item container alignItems="center" justifyContent="space-between">
-                                                                <Grid item>
-                                                                    <Typography variant="subtitle1">Allow Notifications</Typography>
-                                                                </Grid>
-                                                                <Grid item>
-                                                                    <Switch
-                                                                        checked={notification}
-                                                                        onChange={(e) => setNotification(e.target.checked)}
-                                                                        name="sdm"
-                                                                        size="small"
-                                                                    />
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </Grid>
-                                                </CardContent>
-                                            </Card>
+                                            
                                             <Divider />
                                             <List component="nav" className={classes.navContainer}>
                                                 <ListItemButton

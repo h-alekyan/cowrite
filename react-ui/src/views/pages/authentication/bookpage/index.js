@@ -39,7 +39,7 @@ const Bookpage= () => {
                 return(
                     <div>
                         <Button size="small" href={'/edit-book/'+id}>Edit</Button>
-                        <Button size="small">View</Button>
+                        <Button size="small" href={'/get-ownerships/' +id}>View</Button>
                     </div>
                 )
             } else {
@@ -47,7 +47,7 @@ const Bookpage= () => {
                 return(
                     <div>
                         <Button size="small" href={'/new-contribution/' +id}>Contribute</Button>
-                        <Button size="small">View</Button>
+                        <Button size="small" href={'/get-ownerships/' +id}>View</Button>
                     </div>
                 ) 
             }
@@ -55,7 +55,7 @@ const Bookpage= () => {
             return(
                 <div>
                     <Button size="small" href={'/new-contribution/' +id}>Contribute</Button>
-                    <Button size="small">View</Button>
+                    <Button size="small" href={'/get-ownerships/' +id}>View</Button>
                 </div>
             ) 
         }

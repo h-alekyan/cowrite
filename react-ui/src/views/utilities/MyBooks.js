@@ -81,11 +81,13 @@ const MyBooks = ({...others}) => {
             await axios.get(configData.API_SERVER + 'get-book-contributions?book='+bookid, { headers: { Authorization: `${account.token}` } }).then(
                 function(response){
                     contributions[bookid] = response['data']['contributions']
-                    setContribution(contributions)
+            
                 }
             )
             
         }
+        
+        setContribution(contributions)
     }
     
     const getBooks = async () => {
@@ -97,7 +99,6 @@ const MyBooks = ({...others}) => {
 
 
 
-  
 
 
     useBeforeRender(() => getBooks(), []);
@@ -106,7 +107,7 @@ const MyBooks = ({...others}) => {
 
   return(
       <div>
-          {contribution &&
+          {contribution && 
           <div>
                 {books.map((book) => {
                 return (
@@ -119,9 +120,11 @@ const MyBooks = ({...others}) => {
                         <Typography sx={{ width: '33%', flexShrink: 0 }}>
                             {book['title']}
                         </Typography>
-                        <Typography sx={{ color: 'text.secondary' }}> {contribution[book['_id']].length} Contributions</Typography>
+                        <Typography sx={{ color: 'text.secondary' }}> See Contributions</Typography>
                     </AccordionSummary>
-                    <AccordionDetails> {console.log(contribution)}
+                    {contribution[book['_id']].map((contr) => {
+                    return(
+                    <AccordionDetails> 
                                             <Button
                                                 disableElevation
                                                 disabled={false}
@@ -130,11 +133,12 @@ const MyBooks = ({...others}) => {
                                                 type="submit"
                                                 variant="contained"
                                                 color="secondary"
-                                                href={"/review-contribution/"+book['_id']}
+                                                href={"/review-contribution/"+contr['_id']}
                                             >
                                                 Review
                                             </Button>
-                    </AccordionDetails>
+                    </AccordionDetails> )
+                    })}
 
                     </Accordion>
                     

@@ -47,10 +47,10 @@ const Login = () => {
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
                                                     >
-                                                        React Flask AUTH Sample
+                                                        Login
                                                     </Typography>
                                                     <Typography variant="caption" fontSize="16px" textAlign={matchDownSM ? 'center' : ''}>
-                                                        Default credentials: <strong>test@appseed.us / pass</strong>
+                                                        __
                                                     </Typography>
                                                 </Stack>
                                             </Grid>

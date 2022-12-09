@@ -60,7 +60,7 @@ def token_required(f):
             return {"success": False, "msg": "Valid JWT token is missing"}, 400
 
         try:
-            data = 98 #jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
+            data = jwt.decode(token, BaseConfig.SECRET_KEY, algorithms=["HS256"])
             current_user = Users.get_by_email(data["email"])
 
 
@@ -227,9 +227,11 @@ class NewBook(Resource):
 
         book = Book(title=_title, body = _body, description = _description, author_id = self.id)
 
-
         book.save()
 
+        ownership = Ownership(contributor_id = self.id, book_id = book.id, percentage = 1)
+        ownership.save()
+        print(ownership)
 
         return {"success": True}, 200
 
@@ -438,17 +440,11 @@ class AproveContribution(Resource):
        Get all the contributions of a given book 'new_book_model' input
     """
 
-
-
     @rest_api.expect(get_all_books_model)
     @token_required
     def post(self, curent_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
         
-        
         req_data = request.get_json()
-
-        
-       
 
         _bookid = req_data.get("bookid")
         
@@ -463,6 +459,8 @@ class AproveContribution(Resource):
         _body = req_data.get("body")
         _description = req_data.get("description")
         _contrid = req_data.get("contrid")
+        _percentage = req_data.get('percentage')
+
 
 
         book = Book.get_by_id_raw(_bookid)
@@ -472,14 +470,72 @@ class AproveContribution(Resource):
 
         book.save()
 
-        percentage = 0.4
-
-        new_ownership = Ownership(contributor_id = contribution.contributor_id, book_id = _bookid, percentage = percentage)
-        new_ownership.save()
-
         contribution = Contribution.get_by_id(_contrid)
+        print(contribution)
+        print(contribution.contributor_id, _bookid)
 
+        for o in book.ownerships:
+            ownr = Ownership.get_by_id(o.id)
+            print(ownr.percentage, ownr.contributor_id)
+            new_percent = ownr.percentage - (ownr.percentage * _percentage)
+            ownr.update_ownership(new_percent)
+            ownr.save()
+            print(ownr.percentage, ownr.contributor_id)
+
+
+        ownership = Ownership.get_by_contributor_and_book_id(contribution.contributor_id, _bookid)
+        print(ownership)
+
+        if not ownership:
+            ownership = Ownership(contributor_id = contribution.contributor_id, book_id = _bookid, percentage = _percentage)
+            ownership.save()
+            print("new ownership")
+        else:
+            ownership.update_ownership(ownership.percentage + (ownership.percentage * _percentage))
+            ownership.save()
+            print('existing')
+       
+       
+        print(ownership)
+        print(_percentage)
+        
         contribution.update_status("approved")
+        contribution.save()
+        print(book.ownerships)
 
-
+       
+        book.save()
+        
         return {"success": True}, 200
+
+
+
+# ========================== Ownership Endpoints
+
+@rest_api.route('/api/get-ownerships')
+class GetOwnerships(Resource):
+    """
+       Get all the contributions of a given book 'new_book_model' input
+    """
+
+
+
+    @rest_api.expect(get_all_books_model)
+    #@token_required
+    def get(self): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        _id = request.args.get('bookid')
+        
+        book = Book.get_by_id_raw(_id)
+        print(book)
+
+        ownerships = []
+        for ownership in book.ownerships:
+            ownership = ownership.toJSON()
+            ownership['username'] = Users.get_by_id(ownership['contributor_id']).toJSON()['username']
+            ownerships.append(ownership)
+            print(ownership)
+
+       
+        return {"success": True,
+        "ownerships": ownerships}, 200

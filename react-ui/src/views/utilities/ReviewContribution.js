@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useParams } from 'react-router';
 
+import { markdownDiff } from 'markdown-diff';
+
+
 import configData from '../../config';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
@@ -89,6 +92,11 @@ const ReviewContribution = ({...others}) => {
 
     let { id } = useParams();
 
+    var Diff = require('text-diff');
+    var diff = new Diff()
+    const sw = require('stopword')
+    
+
     const classes = useStyles();
     let history = useHistory();
     const scriptedRef = useScriptRef();
@@ -97,12 +105,14 @@ const ReviewContribution = ({...others}) => {
     const account = useSelector((state) => state.account);
     const [content, setContent] = useState("")
     const [loaded, setLoaded] = useState(false)
-
+    const [res, setRes] = useState('')
+    const [percentage, setPercentage] = useState(0)
 
     const [strength, setStrength] = React.useState(0);
     const [level, setLevel] = React.useState('');
 
     const [book, setBook] = useState();
+    const [contribution, setContribution] = useState();
 
     const useBeforeRender = (callback, deps) => {
         const [isRun, setIsRun] = useState(false);
@@ -115,19 +125,49 @@ const ReviewContribution = ({...others}) => {
         useEffect(() => () => setIsRun(false), deps);
     };
     
-    const getBook = async () => {
-        const { data } = await axios.get(configData.API_SERVER + 'get-contribution?contrid=' + id);
-        setBook(data['contribution']);
-        setLoaded(true)
+    const getBook = async (bookid) => {
+        const { data } = await axios.get(configData.API_SERVER + 'get-book?book=' + bookid);
+        setBook(data['book']);
         };
     
-    useBeforeRender(() => getBook(), []);
+    const getContribution = async () => {
+        const { data } = await axios.get(configData.API_SERVER + 'get-contribution?contrid=' + id);
+        setContribution(data['contribution']);
+        await getBook(data['contribution']['book_id'])
+        setLoaded(true)
+        setRes('true')
+        };
+    
+    useBeforeRender(() => getContribution(), []);
     console.log(book)
+
+    useEffect(() => {
+        if(loaded){
+            const body_raw = sw.removeStopwords(book['body'].split(' ')).join()
+            const contr_raw = sw.removeStopwords(contribution['body'].split(' ')).join()
+            console.log(body_raw)
+            const diffres = diff.main(book['body'], contribution['body'])
+            diff.cleanupSemantic(diffres)
+            
+            setRes(diff.prettyHtml(diffres))
+
+            const diff_raw = diff.main(body_raw, contr_raw)
+            const score = diff.levenshtein(diff_raw) / contr_raw.length
+            setPercentage(score)
+        }
+    }, [loaded])
+
+    
+    
+    
+    
+
+
 
 
 
      // Initialize a markdown parser
-     const mdParser = new MarkdownIt(/* Markdown-it options */);
+     const mdParser = new MarkdownIt().set({html:true});
 
      function handleEditorChange({ html, text }) {
         setContent(text)
@@ -144,17 +184,17 @@ const ReviewContribution = ({...others}) => {
         <Formik
                 enableReinitialize ={true}
                 initialValues={{
-                    title: book['title'],
-                    description: book['description'],
-                    body: book['body'],
-                    bookid: book['_id'],
+                    title: contribution['title'],
+                    description: contribution['description'],
+                    body: contribution['body'],
+                    bookid: contribution['book_id'],
                     submit: null
                 }}
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     try {
                         axios
                             .post( configData.API_SERVER + 'aprove-contribution',  { bookid: values.bookid, contrid: id,
-                                title: values.title, body: content, description: values.description
+                                title: values.title, body: values.body, description: values.description, percentage: percentage
                             }, { headers: { Authorization: `${account.token}` } })
                             .then(function (response) {
                                 if (response.data.success) {
@@ -252,10 +292,9 @@ const ReviewContribution = ({...others}) => {
                             </FormControl>
                         )}
 
-                      
-
-                        <MdEditor style={{ height: '700px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} defaultValue={book['body']} />
-          
+                                   {res &&                  
+                        <MdEditor style={{ height: '700px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} defaultValue={res} />
+                                   }
 
                         <Grid container alignItems="center" justifyContent="space-between">
                             <Grid item>
@@ -270,9 +309,9 @@ const ReviewContribution = ({...others}) => {
                                     }
                                     label={
                                         <Typography variant="subtitle1">
-                                            Agree with &nbsp;
+                                            The suggested ownership for this contribution is &nbsp;
                                             <Typography variant="subtitle1" component={Link} to="#">
-                                                Terms & Condition.
+                                                {percentage.toPrecision(2)}% 
                                             </Typography>
                                         </Typography>
                                     }
@@ -307,6 +346,7 @@ const ReviewContribution = ({...others}) => {
                                 </Button>
                             </AnimateButton>
                         </Box>
+
                     </form>
                 )}
 

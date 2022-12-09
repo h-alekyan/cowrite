@@ -15,29 +15,33 @@ db = SQLAlchemy()
 
 
 class Ownership(db.Model):
-    contributor_id = db.Column(db.Integer(),  db.ForeignKey('users.id'), primary_key=True, nullable=False, index=True)
+    id = db.Column(db.Integer(), primary_key=True)
+    contributor_id = db.Column(db.Integer(),  db.ForeignKey('users.id'), nullable=False, index=True)
     contributor = db.relationship('Users', backref='ownerships', foreign_keys=[contributor_id])
     book_id = db.Column(db.Integer(), db.ForeignKey('book.id'), nullable=False, index=True)
     book = db.relationship('Book', backref='ownerships', foreign_keys=[book_id])
     percentage = db.Column(db.Float())
 
     def __repr__(self):
-        return f"Ownership id {self.contributor_id}"
+        return f"Ownership id {self.id}"
 
     def save(self):
         db.session.add(self)
         db.session.commit()
 
 
+    #@classmethod
     def update_ownership(self, new_percentage):
         self.percentage = new_percentage
 
    
     @classmethod
     def get_by_id(cls, id):
-        return cls.query.get_or_404(id)
+        return cls.query.get(id)
 
-
+    @classmethod
+    def get_by_contributor_and_book_id(cls, contributor_id, book_id):
+        return cls.query.filter(contributor_id == contributor_id & book_id == book_id).first()
 
 
     def toDICT(self):
