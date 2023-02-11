@@ -15,7 +15,7 @@ const icons = {
 
 export const utilities = {
     id: 'utilities',
-    title: 'Utilities',
+    title: '',
     type: 'group',
     children: [
         {
@@ -39,33 +39,49 @@ export const utilities = {
 
 export const outerLinks = {
     id: 'utilities',
-    title: 'Categories',
+    title: '',
     type: 'group',
     children: [
         {
             id: 'util-typography',
-            title: 'Comedy',
+            title: 'My Books',
             type: 'item',
-            url: '/utils/util-typography',
+            url: '/my-books',
             icon: icons['IconTypography'],
             breadcrumbs: false
         },
         {
             id: 'util-color',
-            title: 'Science',
+            title: 'My Contributions',
             type: 'item',
-            url: '/utils/util-color',
+            url: '/my-contributions',
             icon: icons['IconPalette'],
             breadcrumbs: false
         },
-        {
-            id: 'util-shadow',
-            title: 'Romance',
-            type: 'item',
-            url: '/utils/util-shadow',
-            icon: icons['IconShadow'],
-            breadcrumbs: false
-        },
+        // {
+        //     id: 'util-typography',
+        //     title: 'Comedy',
+        //     type: 'item',
+        //     url: '/utils/util-typography',
+        //     icon: icons['IconTypography'],
+        //     breadcrumbs: false
+        // },
+        // {
+        //     id: 'util-color',
+        //     title: 'Science',
+        //     type: 'item',
+        //     url: '/utils/util-color',
+        //     icon: icons['IconPalette'],
+        //     breadcrumbs: false
+        // },
+        // {
+        //     id: 'util-shadow',
+        //     title: 'Romance',
+        //     type: 'item',
+        //     url: '/utils/util-shadow',
+        //     icon: icons['IconShadow'],
+        //     breadcrumbs: false
+        // },
         
     ]
 };

@@ -30,7 +30,7 @@ class Ownership(db.Model):
         db.session.commit()
 
 
-    #@classmethod
+    @classmethod
     def update_ownership(self, new_percentage):
         self.percentage = new_percentage
 
@@ -120,6 +120,7 @@ class Contribution(db.Model):
         cls_dict['body'] = self.body
         cls_dict['status'] = self.status
         cls_dict['contributor'] = self.contributor_id
+        cls_dict['contributor_username'] = self.contributor.username
         cls_dict['book_id'] = self.book_id
 
         return cls_dict

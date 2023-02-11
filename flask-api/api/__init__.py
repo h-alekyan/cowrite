@@ -6,7 +6,9 @@ Copyright (c) 2019 - present AppSeed.us
 import json
 
 from flask import Flask
-from flask_cors import CORS
+
+from flask_cors import CORS  # The typical way to import flask-cors
+
 
 from .routes import rest_api
 from .models import db

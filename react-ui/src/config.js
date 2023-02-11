@@ -3,7 +3,7 @@ const config = {
     // like '/berry-material-react/react/default'
     basename: '',
     defaultPath: '/bookstore',
-    loggedInPath: '/dashboard/default',
+    loggedInPath: '/my-books',
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 12,
     API_SERVER: 'http://localhost:5001/api/'

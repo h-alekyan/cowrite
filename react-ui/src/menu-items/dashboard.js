@@ -11,17 +11,17 @@ const icons = {
 
 export const dashboard = {
     id: 'dashboard',
-    title: 'Dashboard',
+    title: 'Welcome!',
     type: 'group',
     children: [
-        {
-            id: 'default',
-            title: 'Dashboard',
-            type: 'item',
-            url: '/dashboard/default',
-            icon: icons['IconDashboard'],
-            breadcrumbs: false
-        }
+        // {
+        //     id: 'default',
+        //     title: 'Dashboard',
+        //     type: 'item',
+        //     url: '/dashboard/default',
+        //     icon: icons['IconDashboard'],
+        //     breadcrumbs: false
+        // }
     ]
 };
 
