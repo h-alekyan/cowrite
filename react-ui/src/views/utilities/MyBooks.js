@@ -52,6 +52,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 //===========================|| MY BOOKS SECTION ||===========================//
 
 const MyBooks = ({...others}) => {
+    const CLIENT_ID = 'e274cb8b4acf0c94f05b'
+
     const account = useSelector((state) => state.account);
     const [expanded, setExpanded] = useState(false);
     const [contribution, setContribution] = useState()
@@ -73,6 +75,10 @@ const MyBooks = ({...others}) => {
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
       };
+
+    const loginWithGitHub = () => {
+        window.location.assign('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID)
+    }
 
     const getContributions = async (data) => {
         const contributions = {}
@@ -107,6 +113,36 @@ const MyBooks = ({...others}) => {
 
   return(
       <div>
+          <div style={{display:'flex', justifyContent: 'space-between', marginBottom: '1em'}}>
+          <AnimateButton>
+                                <Button
+                                    disableElevation
+                                    disabled={false}
+                                    fullWidth
+                                    size="large"
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    href="/new-book"
+                                >
+                                    New Book
+                                </Button>
+                            </AnimateButton>
+                            <AnimateButton>
+                                <Button
+                                    disableElevation
+                                    disabled={false}
+                                    fullWidth
+                                    size="large"
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={loginWithGitHub}
+                                >
+                                    Import from GitHub
+                                </Button>
+                            </AnimateButton>
+                            </div>
           {contribution && 
           <div>
                 {books.map((book) => {
@@ -122,9 +158,13 @@ const MyBooks = ({...others}) => {
                         </Typography>
                         <Typography sx={{ color: 'text.secondary' }}> See Contributions</Typography>
                     </AccordionSummary>
-                    {contribution[book['_id']].map((contr) => {
+                    {contribution[book['_id']].map((contr) => { 
+                    console.log(contr) 
+                    if(contr['status'] == 'submitted'){
                     return(
                     <AccordionDetails> 
+                        <div>
+                            <p>Contribution by {contr['contributor_username']}</p>
                                             <Button
                                                 disableElevation
                                                 disabled={false}
@@ -137,8 +177,9 @@ const MyBooks = ({...others}) => {
                                             >
                                                 Review
                                             </Button>
+                            </div>
                     </AccordionDetails> )
-                    })}
+                }})}
 
                     </Accordion>
                     
@@ -146,20 +187,7 @@ const MyBooks = ({...others}) => {
             })} </div> }
         
 
-                            <AnimateButton>
-                                <Button
-                                    disableElevation
-                                    disabled={false}
-                                    fullWidth
-                                    size="large"
-                                    type="submit"
-                                    variant="contained"
-                                    color="secondary"
-                                    href="/new-book"
-                                >
-                                    New Book
-                                </Button>
-                            </AnimateButton>
+                            
       
       </div>
 
