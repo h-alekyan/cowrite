@@ -10,11 +10,15 @@ import AuthGuard from './../utils/route-guard/AuthGuard';
 const DashboardDefault = Loadable(lazy(() => import('../views/dashboard/Default')));
 
 // utilities routing
-const UtilsTypography = Loadable(lazy(() => import('../views/utilities/Typography')));
-const UtilsColor = Loadable(lazy(() => import('../views/utilities/Color')));
+const MyBooks = Loadable(lazy(() => import('../views/utilities/MyBooks')));
+const MyContributions = Loadable(lazy(() => import('../views/utilities/MyContributions')));
 const UtilsShadow = Loadable(lazy(() => import('../views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('../views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('../views/utilities/TablerIcons')));
+const NewBook = Loadable(lazy(() => import('../views/utilities/NewBook')));
+const EditBook = Loadable(lazy(() => import('../views/utilities/EditBook')));
+const NewContribution = Loadable(lazy(() => import('../views/utilities/NewContribution')));
+const ReviewContribution = Loadable(lazy(() => import('../views/utilities/ReviewContribution')));
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
@@ -29,13 +33,12 @@ const MainRoutes = () => {
             path={[
                 '/dashboard/default',
 
-                '/utils/util-typography',
-                '/utils/util-color',
-                '/utils/util-shadow',
-                '/icons/tabler-icons',
-                '/icons/material-icons',
-
-                '/sample-page'
+                '/my-books',
+                '/my-contributions',
+                '/review-contribution',
+                '/new-contribution',
+                '/new-book',
+                '/edit-book'
             ]}
         >
             <MainLayout>
@@ -43,13 +46,13 @@ const MainRoutes = () => {
                     <AuthGuard>
                         <Route path="/dashboard/default" component={DashboardDefault} />
 
-                        <Route path="/utils/util-typography" component={UtilsTypography} />
-                        <Route path="/utils/util-color" component={UtilsColor} />
-                        <Route path="/utils/util-shadow" component={UtilsShadow} />
-                        <Route path="/icons/tabler-icons" component={UtilsTablerIcons} />
-                        <Route path="/icons/material-icons" component={UtilsMaterialIcons} />
+                        <Route path="/my-books" component={MyBooks} />
+                        <Route path="/my-contributions" component={MyContributions} />
+                        <Route path="/review-contribution/:id" component={ReviewContribution} />
+                        <Route path="/new-contribution/:id" component={NewContribution} />
+                        <Route path="/new-book" component={NewBook} />
 
-                        <Route path="/sample-page" component={SamplePage} />
+                        <Route path="/edit-book/:id" component={EditBook} />
                     </AuthGuard>
                 </Switch>
             </MainLayout>

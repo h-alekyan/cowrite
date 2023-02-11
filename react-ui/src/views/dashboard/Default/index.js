@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // material-ui
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 
 // project imports
 import EarningCard from './EarningCard';
@@ -23,7 +23,8 @@ const Dashboard = () => {
     return (
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
-                <Grid container spacing={gridSpacing}>
+                <Typography>Welcome to your dashboard</Typography>
+                {/* <Grid container spacing={gridSpacing}>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
                         <EarningCard isLoading={isLoading} />
                     </Grid>
@@ -50,7 +51,7 @@ const Dashboard = () => {
                     <Grid item xs={12} md={4}>
                         <PopularCard isLoading={isLoading} />
                     </Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Grid>
     );

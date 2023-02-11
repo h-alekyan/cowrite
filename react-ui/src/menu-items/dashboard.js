@@ -11,14 +11,30 @@ const icons = {
 
 export const dashboard = {
     id: 'dashboard',
-    title: 'Dashboard',
+    title: 'Welcome!',
+    type: 'group',
+    children: [
+        // {
+        //     id: 'default',
+        //     title: 'Dashboard',
+        //     type: 'item',
+        //     url: '/dashboard/default',
+        //     icon: icons['IconDashboard'],
+        //     breadcrumbs: false
+        // }
+    ]
+};
+
+export const bookstore = {
+    id: 'bookstore',
+    title: 'Bookstore',
     type: 'group',
     children: [
         {
             id: 'default',
-            title: 'Dashboard',
+            title: 'Bookstore',
             type: 'item',
-            url: '/dashboard/default',
+            url: '/bookstore',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         }

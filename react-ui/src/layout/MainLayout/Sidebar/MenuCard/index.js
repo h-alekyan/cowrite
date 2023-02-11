@@ -60,7 +60,7 @@ const UpgradePlanCard = () => {
 
     return (
         <Card className={classes.card}>
-            <CardContent>
+            {/* <CardContent>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
                         <Typography variant="h4">
@@ -88,7 +88,7 @@ const UpgradePlanCard = () => {
                         </Stack>
                     </Grid>
                 </Grid>
-            </CardContent>
+            </CardContent> */}
         </Card>
     );
 };

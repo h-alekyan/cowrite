@@ -213,7 +213,7 @@ const ProfileSection = () => {
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                     <CardContent className={classes.cardContent}>
-                                        <Grid container direction="column" spacing={0}>
+                                        {/* <Grid container direction="column" spacing={0}>
                                             <Grid item className={classes.flex}>
                                                 <Typography variant="h4">Good Morning,</Typography>
                                                 <Typography component="span" variant="h4" className={classes.name}>
@@ -240,9 +240,9 @@ const ProfileSection = () => {
                                                 'aria-label': 'weight'
                                             }}
                                         />
-                                        <Divider />
+                                        <Divider /> */}
                                         <PerfectScrollbar className={classes.ScrollHeight}>
-                                            <UpgradePlanCard />
+                                            {/* <UpgradePlanCard />
                                             <Divider />
                                             <Card className={classes.card}>
                                                 <CardContent>
@@ -281,7 +281,7 @@ const ProfileSection = () => {
                                                     </Grid>
                                                 </CardContent>
                                             </Card>
-                                            <Divider />
+                                            <Divider /> */}
                                             <List component="nav" className={classes.navContainer}>
                                                 <ListItemButton
                                                     className={classes.listItem}

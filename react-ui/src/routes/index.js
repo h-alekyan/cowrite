@@ -4,6 +4,7 @@ import { Redirect, Switch } from 'react-router-dom';
 // routes
 import MainRoutes from './MainRoutes';
 import LoginRoutes from './LoginRoutes';
+import OpenRoutes from './OpenRoutes';
 import AuthenticationRoutes from './AuthenticationRoutes';
 
 // project imports
@@ -24,7 +25,12 @@ const Routes = () => {
 
                 {/* Routes for main layouts */}
                 <MainRoutes />
+
+                {/* Route for open pages such as main bookstore and individual book pages*/}
+                <OpenRoutes />
+
             </React.Fragment>
+            
         </Switch>
     );
 };
