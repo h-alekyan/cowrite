@@ -2,6 +2,9 @@
     "name": "cowrite",
     "version": "1.0.0",
     "private": true,
+    "engines": {
+        "node": ">=10.0.0"
+    },
     "dependencies": {
         "@emotion/react": "^11.4.0",
         "@emotion/styled": "^11.3.0",
