@@ -148,6 +148,7 @@ const ReviewContribution = ({...others}) => {
             console.log(body_raw)
             const diffres = diff.main(book['body'], contribution['body'])
             diff.cleanupSemantic(diffres)
+            console.log(diffres)
             
             setRes(diff.prettyHtml(diffres))
 
@@ -199,6 +200,7 @@ const ReviewContribution = ({...others}) => {
                             .then(function (response) {
                                 if (response.data.success) {
                                     console.log(response.data);
+                                    history.push('/my-books')
                                 } else {
                                     setStatus({ success: false });
                                     setErrors({ submit: response.data.msg });

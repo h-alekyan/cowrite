@@ -471,8 +471,7 @@ class AproveContribution(Resource):
         book.save()
 
         contribution = Contribution.get_by_id(_contrid)
-        print(contribution)
-        print(contribution.contributor_id, _bookid)
+       
 
         for o in book.ownerships:
             ownr = Ownership.get_by_id(o.id)
