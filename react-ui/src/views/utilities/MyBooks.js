@@ -26,7 +26,15 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Card
+    Card,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Alert,
+    Snackbar,
+    Portal
 } from '@material-ui/core';
 
 
@@ -54,12 +62,25 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 const MyBooks = ({...others}) => {
     const CLIENT_ID = 'e274cb8b4acf0c94f05b'
 
+    const [open, setOpen] = React.useState(false);
+    const [snackPack, setSnackPack] = React.useState([]);
+    const [snackOpen, setSnackOpen] = React.useState(false);
+    const [messageInfo, setMessageInfo] = React.useState(undefined);
+
+
+    const [githubAuth, setGitHubAuth] = useState()
+    const [githubRepos, setGithubRepos] = useState()
+
     const account = useSelector((state) => state.account);
     const [expanded, setExpanded] = useState(false);
     const [contribution, setContribution] = useState()
     const [loaded, setLoaded] = useState(false)
 
     const [books, setBooks] = useState([]);
+
+    const [success, setSuccess] = useState(false)
+
+
 
     const useBeforeRender = (callback, deps) => {
         const [isRun, setIsRun] = useState(false);
@@ -76,9 +97,35 @@ const MyBooks = ({...others}) => {
         setExpanded(isExpanded ? panel : false);
       };
 
+    const handleOpen  = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        window.location.reload(true)
+      };
+
+    const handleSnackClick = (message) => () => {
+        setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+    };
+
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setSnackOpen(false);
+      };
+
+    const handleExited = () => {
+        setMessageInfo(undefined);
+    };
+
+
     const loginWithGitHub = () => {
         window.location.assign('https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID)
     }
+
 
     const getContributions = async (data) => {
         const contributions = {}
@@ -104,15 +151,66 @@ const MyBooks = ({...others}) => {
     };
 
 
+    const getGithubAuth = async () => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const auth = urlParams.get('code')
+        
+
+        if (auth && (localStorage.getItem("GitHubAccessToken") === null)){
+            const access_token = await axios.get(configData.API_SERVER + 'get-github-accesstoken?code='+auth, { headers: { Authorization: `${account.token}` } })
+            setGitHubAuth(access_token['data']['response']['access_token']) 
+        }
+
+    }
 
 
+    const getGithubRepos = async () => {
+        if (githubAuth !== undefined){
+            console.log(githubAuth)
+            const auth = 'BEARER ' + githubAuth
+            const repos = await axios.get(configData.API_SERVER + 'get-github-user?auth='+auth, { headers: { Authorization: `${account.token}` } })
+            setGithubRepos(repos)
+            handleOpen()
+        }
+    }
 
     useBeforeRender(() => getBooks(), []);
+    useBeforeRender(() => getGithubAuth(), []);
 
+    useEffect(() => {
+        getGithubRepos()
+    }, [githubAuth])
 
+    const descriptionElementRef = React.useRef(null);
+    useEffect(() => {
+    if (open) {
+        const { current: descriptionElement } = descriptionElementRef;
+        if (descriptionElement !== null) {
+            descriptionElement.focus();
+        }
+    }
+    }, [open]);
+
+    useEffect(() => {
+        if (snackPack.length && !messageInfo) {
+          // Set a new snack when we don't have an active one
+          setMessageInfo({ ...snackPack[0] });
+          setSnackPack((prev) => prev.slice(1));
+          setSnackOpen(true);
+        } else if (snackPack.length && messageInfo && open) {
+          // Close an active snack when a new one is added
+          setSnackOpen(false);
+        }
+      }, [snackPack, messageInfo, snackOpen]);
+
+    
+
+    console.log(githubAuth)
 
   return(
       <div>
+
           <div style={{display:'flex', justifyContent: 'space-between', marginBottom: '1em'}}>
           <AnimateButton>
                                 <Button
@@ -139,7 +237,7 @@ const MyBooks = ({...others}) => {
                                     color="secondary"
                                     onClick={loginWithGitHub}
                                 >
-                                    Import from GitHub
+                                    Connect GitHub
                                 </Button>
                             </AnimateButton>
                             </div>
@@ -179,13 +277,93 @@ const MyBooks = ({...others}) => {
                                             </Button>
                             </div>
                     </AccordionDetails> )
-                }})}
+                    }})}
 
                     </Accordion>
                     
                 )
-            })} </div> }
-        
+            })} 
+        </div> 
+        }
+        {(githubRepos && githubAuth) && 
+          <div>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        scroll='paper'
+                        aria-labelledby="scroll-dialog-title"
+                        aria-describedby="scroll-dialog-description"
+                    >
+                        <DialogTitle id="scroll-dialog-title">Would you like to import any projects?</DialogTitle>
+                        <DialogContent dividers={true}>
+                        <DialogContentText
+                            id="scroll-dialog-description"
+                            ref={descriptionElementRef}
+                            tabIndex={-1}
+                        >
+                          {githubRepos['data']['response'].map((repo) => {
+                return (
+                        <Accordion expanded={expanded === repo['id']} onChange={handleChange(repo['id'])}>
+                        <AccordionSummary
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header"
+                            fullwidth
+                            >
+                        <Typography sx={{ width: '100%', flexShrink: 0 }}>
+                            <div style={{display:'flex', justifyContent: 'space-between', marginBottom: '1em'}}>
+                                <div style={{width: '50%'}}>
+                                    {repo['name']}
+                                </div>
+                                <Button
+                                    disableElevation
+                                    disabled={false}
+                                    size="small"
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={async function(){
+                                        await axios.post(configData.API_SERVER + 'fetch-github-content', {gitAuth: githubAuth, repo: repo['name'], user: repo['owner']['login']}, { headers: { Authorization: `${account.token}` }}).then(response => {
+                                           <Portal>
+                                                <Dialog
+                                                    open={true}
+                                                    onClose={handleClose}
+                                                    scroll='paper'
+                                                    aria-labelledby="scroll-dialog-title"
+                                                    aria-describedby="scroll-dialog-description"
+                                                >
+                                                <DialogContentText
+                                                    id="scroll-dialog-description"
+                                                    tabIndex={-1}
+                                                >
+                                                    Success
+
+                                                </DialogContentText>
+                                                </Dialog>
+                                            </Portal>
+                                        })
+                                        
+
+                                    }}
+                                >
+                                                Fetch
+                                            </Button>
+                            </div>
+                        </Typography>
+                        {/* <Typography sx={{ color: 'text.secondary' }}> Import </Typography> */}
+                    </AccordionSummary>
+
+                    </Accordion>
+                )})}
+                        </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleClose}>Done</Button>
+                        </DialogActions>
+                    </Dialog>
+                    
+             
+        </div> 
+        }
 
                             
       

@@ -104,7 +104,6 @@ const NewBook = ({...others}) => {
         setContent(text)
       }
 
-      console.log(account.token)
 
 
      
@@ -128,6 +127,8 @@ const NewBook = ({...others}) => {
                             .then(function (response) {
                                 if (response.data.success) {
                                     console.log(response.data);
+                                    history.push('/my-books')
+
                                 } else {
                                     setStatus({ success: false });
                                     setErrors({ submit: response.data.msg });

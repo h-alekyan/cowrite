@@ -12,6 +12,54 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class GithubOwnership(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    contributor_github_username = db.Column(db.Text(), nullable=False, index=True)
+    book_id = db.Column(db.Integer(), db.ForeignKey('book.id'), nullable=False, index=True)
+    book = db.relationship('Book', backref='github_ownerships', foreign_keys=[book_id])
+    percentage = db.Column(db.Float())
+
+    def __repr__(self):
+        return f"Github Ownership id {self.id}"
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+    @classmethod
+    def update_ownership(self, new_percentage):
+        self.percentage = new_percentage
+
+   
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.get(id)
+
+    
+    @classmethod
+    def fetch_ownerships(cls, contributor_github_username):
+        res = []
+        query = cls.query.filter_by(contributor_github_username=contributor_github_username)
+        for row in query:
+            res.append(row.toJSON())
+       
+        return res
+
+
+    def toDICT(self):
+
+        cls_dict = {}
+        cls_dict['contributor_github_username'] = self.contributor_github_username
+        cls_dict['book_id'] = self.book_id
+        cls_dict['percentage'] = self.percentage
+
+        return cls_dict
+
+    def toJSON(self):
+
+        return self.toDICT()
+
 
 
 class Ownership(db.Model):
@@ -136,6 +184,8 @@ class Book(db.Model):
     title = db.Column(db.String(125), nullable=False)
     body = db.Column(db.Text())
     description = db.Column(db.Text())
+    is_github = db.Column(db.String(32))
+    github_repo_name = db.Column(db.String(32))
     date_created = db.Column(db.DateTime(), default=datetime.utcnow)
     author_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False, index=True)
     author = db.relationship('Users', backref='authored_books', foreign_keys=[author_id])
@@ -201,6 +251,7 @@ class Users(db.Model):
     password = db.Column(db.Text())
     jwt_auth_active = db.Column(db.Boolean())
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
+    github_username = db.Column(db.Text())
 
     def __repr__(self):
         return f"User {self.username}, Books {self.authored_books}"
@@ -217,6 +268,9 @@ class Users(db.Model):
 
     def update_email(self, new_email):
         self.email = new_email
+    
+    def update_github_username(self, username):
+        self.github_username = username
 
     def update_username(self, new_username):
         self.username = new_username
@@ -239,6 +293,11 @@ class Users(db.Model):
             books.append(book.toJSON())
 
         return books
+    
+    @classmethod
+    def get_github_username(cls):
+        return cls.github_username
+
 
     @classmethod
     def get_contributions(cls):

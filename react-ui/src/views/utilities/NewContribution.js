@@ -87,6 +87,9 @@ const useStyles = makeStyles((theme) => ({
 
 const NewContribution = ({...others}) => {
 
+    var Diff = require('text-diff');
+    var diff = new Diff()
+
     let { id } = useParams();
 
     const classes = useStyles();
@@ -157,6 +160,7 @@ const NewContribution = ({...others}) => {
                             .then(function (response) {
                                 if (response.data.success) {
                                     console.log(response.data);
+                                    history.push('/my-contributions')
                                 } else {
                                     setStatus({ success: false });
                                     setErrors({ submit: response.data.msg });

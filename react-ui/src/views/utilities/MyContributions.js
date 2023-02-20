@@ -26,7 +26,12 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Card
+    Card,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core';
 
 
@@ -52,20 +57,39 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 //===========================|| MY BOOKS SECTION ||===========================//
 
 const MyContributions = ({...others}) => {
+
     const account = useSelector((state) => state.account);
     const [expanded, setExpanded] = useState(false);
 
+
     const [books, setBooks] = useState(["hi"]);
+
+    const useBeforeRender = (callback, deps) => {
+        const [isRun, setIsRun] = useState(false);
+    
+        if (!isRun) {
+            callback();
+            setIsRun(true);
+        }
+    
+        useEffect(() => () => setIsRun(false), deps);
+    };
+
 
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
       };
+
+      const fetchFromGithub = () => {
+        axios.post(configData.API_SERVER + 'fetch-github-contributions', {}, { headers: { Authorization: `${account.token}` } })
+    }
 
     
     const getBooks = async () => {
         const { data } = await axios.get(configData.API_SERVER + 'get-user-contributions', { headers: { Authorization: `${account.token}` } });
         setBooks(data["books"]);
     };
+    
     useEffect(() => {
     getBooks();
   }, []);
@@ -75,10 +99,29 @@ const MyContributions = ({...others}) => {
     console.log(books)
 
 
+
   return(
       <div>
+          <div style={{display:'flex', justifyContent: 'space-between', marginBottom: '1em'}}>
+                            <AnimateButton>
+                                <Button
+                                    disableElevation
+                                    disabled={false}
+                                    fullWidth
+                                    size="large"
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={fetchFromGithub}
+                                >
+                                    Fetch from GitHub
+                                </Button>
+                            </AnimateButton>
+                </div>
         {books.map((book) => {
         return (
+        <div>
+            
             <Accordion expanded={expanded === book._id} onChange={handleChange(book['_id'])}>
                 <AccordionSummary
                     aria-controls="panel1bh-content"
@@ -106,6 +149,7 @@ const MyContributions = ({...others}) => {
             </AccordionDetails>
 
             </Accordion>
+            </div>
             
         )
       })}
