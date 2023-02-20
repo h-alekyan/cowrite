@@ -4,6 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from datetime import datetime, timezone, timedelta
+from email import header
 
 from functools import wraps
 
@@ -12,9 +13,12 @@ from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import Ownership, Contribution, db, Users, Book, JWTTokenBlocklist
+from .models import GithubOwnership, Ownership, Contribution, db, Users, Book, JWTTokenBlocklist
 from .config import BaseConfig
 
+
+import requests
+import Levenshtein
 rest_api = Api(version="1.0", title="Users API")
 
 
@@ -40,7 +44,48 @@ new_book_model = rest_api.model('NewBookModel', {"title": fields.String(required
                                               })
 
 get_all_books_model = rest_api.model('AllBooksModel', {"title": fields.String(required=True, min_length=2, max_length=125),
-                                              })                                              
+                                              })   
+
+
+"""
+GitHub Credentials
+"""
+CLIENT_ID = 'e274cb8b4acf0c94f05b'
+CLIENT_SECRET = '5cb554f7de9b481fed9b6d6eaf60cfc9a56c5cc8'
+
+
+"""
+    Helper function for contribution level calculation
+"""
+
+def calculate_contribution(difftext, fulltext):
+
+    
+    added_lines = []
+    removed_lines = []
+
+    for line in difftext.splitlines():
+        if line.startswith('+'):
+            added_lines.append(line[1:])
+        elif line.startswith('-'):
+            removed_lines.append(line[1:])
+
+    added_total = (' ').join(added_lines)
+    removed_total = (' ').join(removed_lines)
+        
+    distance = Levenshtein.distance(added_total, removed_total)
+
+    difference_score = distance / max(len(added_total), len(removed_total))
+
+    percent_of_text = len(added_lines) / len(fulltext)
+
+    contribution_score = percent_of_text * difference_score
+
+
+    return contribution_score
+
+def calculate_ownerships(contributions):
+    pass
 
 """
    Helper function for JWT token required
@@ -52,6 +97,7 @@ def token_required(f):
     def decorator(*args, **kwargs):
 
         token = None
+
 
         if "authorization" in request.headers:
             token = request.headers["authorization"]
@@ -533,8 +579,180 @@ class GetOwnerships(Resource):
             ownership = ownership.toJSON()
             ownership['username'] = Users.get_by_id(ownership['contributor_id']).toJSON()['username']
             ownerships.append(ownership)
-            print(ownership)
+            #print(type(ownership))
+        print(ownerships)
 
        
         return {"success": True,
         "ownerships": ownerships}, 200
+
+
+# ============================= Github Proxy Routes =======================
+
+@rest_api.route('/api/get-github-accesstoken')
+class GetGithubAccessToken(Resource):
+    """
+       Get github auth token
+    """
+
+    
+
+    @rest_api.expect(get_all_books_model)
+    @token_required
+    def get(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        code = request.args.get('code')
+        
+        params = f'?client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&code={code}'
+
+
+        r = requests.get(f"https://github.com/login/oauth/access_token/{params}", headers={
+            "Accept": "application/json"
+        })
+       
+        return {"success": True,
+        "response": r.json()}, 200
+
+
+        
+@rest_api.route('/api/get-github-user')
+class GetGithubUserRepos(Resource):
+    """
+       Get github user repositories
+    """
+
+    
+
+    @rest_api.expect(get_all_books_model)
+    @token_required
+    def get(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        auth = request.args.get('auth')
+        print(auth)
+
+        r = requests.get(f"https://api.github.com/user/repos", headers={
+            "Authorization": auth
+        }).json()
+
+
+        self.update_github_username(r[0]['owner']['login'])
+        self.save()
+        
+       
+        return {"success": True,
+        "response": r}, 200
+
+
+@rest_api.route('/api/fetch-github-content')
+class FetchFromGithub(Resource):
+    """
+       Get the book from Github Repository
+    """
+
+    
+
+    @rest_api.expect(user_edit_model)
+    @token_required
+    def post(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        req_data = request.get_json()
+
+        auth = 'BEARER ' + req_data.get('gitAuth')
+        print(auth)
+        repo = req_data.get('repo')
+        user = req_data.get('user')
+
+
+        r = requests.get(f"https://api.github.com/repos/{user}/{repo}/readme", headers={
+             "Authorization": auth,
+             "Accept": "application/vnd.github+json"
+
+        })
+
+        res = r.json()
+
+        markdown_content = requests.get(res['download_url']).text
+
+        _title = markdown_content[:200].splitlines()[0]
+        _body = markdown_content
+        _description = markdown_content[:1000].splitlines()[2]
+
+
+
+        book = Book(title=_title, body = _body, description = _description, author_id = self.id)
+
+        book.save()
+
+        contributors = {}
+        total_contributions = 0
+
+        pull_requests = requests.get(f'https://api.github.com/repos/{user}/{repo}/pulls?state=all', headers={
+             "Authorization": auth,
+             "Accept": "application/vnd.github+json"
+        }).json()
+
+        
+        
+        for i in range(len(pull_requests)):
+            diff_url = f'https://github.com/{user}/{repo}/pull/' + pull_requests[i]['diff_url'].split('/')[-1]
+
+            diff_file = requests.get(diff_url, headers={
+                "Authorization": auth,
+                "Accept": "application/vnd.github.diff"
+            })
+
+            contribution_score = calculate_contribution(diff_file.text, _body)
+            total_contributions += contribution_score
+            contributor = pull_requests[i]['user']['login']
+
+
+            if contributor in contributors.keys():
+                contributors[contributor] += contribution_score
+            else:
+                contributors[contributor] = contribution_score
+
+
+        for key in contributors.keys():
+            contributors[key] = contributors[key] / total_contributions
+        
+        for key in contributors.keys():
+            print(key)
+            github_ownership = GithubOwnership(contributor_github_username=key, book_id = book.id, percentage = contributors[key])
+            print(github_ownership)
+            github_ownership.save()
+
+        
+        return {"success": True, "response": contributors}, 200
+
+
+
+@rest_api.route('/api/fetch-github-contributions')
+class FetchGithubOwnerships(Resource):
+    """
+       Get the book from Github Repository
+    """
+
+    
+
+    @rest_api.expect(user_edit_model)
+    @token_required
+    def post(self, current_user): # TODO: fix this, bad abstraction, for some reason this same function inside models fails
+
+        req_data = request.get_json()
+
+        username = self.github_username
+
+        print(username)
+
+        user_ownerships = GithubOwnership.fetch_ownerships(username)
+        
+        print("USER OWNERSHIPS: ", user_ownerships)
+
+        for ownership in user_ownerships:
+            in_app_ownership = Ownership(contributor_id = self.id, book_id = ownership['book_id'], percentage = ownership['percentage'])
+            in_app_ownership.save()
+            contribution = Contribution(title = "GitHub Contribution", body = "This is the cummulative contribution of the user on the project. The body of the user's contributions can only be seen on the respective pull reqeusts on GitHub", book_id=ownership['book_id'], contributor_id =self.id, status = "fetched from github (approved)", description = "This contribution has been fetched from GitHub")
+            contribution.save()
+
+        
+        return {"success": True}, 200
