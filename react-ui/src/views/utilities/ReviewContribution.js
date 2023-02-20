@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useParams } from 'react-router';
 
-import { markdownDiff } from 'markdown-diff';
+
 
 
 import configData from '../../config';
