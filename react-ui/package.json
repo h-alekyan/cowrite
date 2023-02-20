@@ -41,6 +41,7 @@
         "redux": "^4.0.5",
         "redux-persist": "^6.0.0",
         "remove-stopwords": "^1.0.3",
+        "serve": "^14.2.0",
         "stopword": "^2.0.5",
         "text-diff": "^1.0.1",
         "yup": "^0.32.9"
@@ -69,7 +70,6 @@
     },
     "devDependencies": {
         "@material-ui/codemod": "^5.0.0-alpha.35",
-        "sass": "^1.32.11",
-        "serve": "^14.2.0"
+        "sass": "^1.32.11"
     }
 }
