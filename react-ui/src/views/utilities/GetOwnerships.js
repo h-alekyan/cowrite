@@ -37,17 +37,22 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import axios from 'axios';
 
-// project imports
-import useScriptRef from '../../hooks/useScriptRef';
-import AnimateButton from '../../ui-component/extended/AnimateButton';
-import { strengthColor, strengthIndicator } from '../../utils/password-strength';
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+// import style manually
+import 'react-markdown-editor-lite/lib/index.css';
 
-import { useTheme } from '@material-ui/styles';
+// // project imports
+// import useScriptRef from '../../hooks/useScriptRef';
+// import AnimateButton from '../../ui-component/extended/AnimateButton';
+// import { strengthColor, strengthIndicator } from '../../utils/password-strength';
+
+// import { useTheme } from '@material-ui/styles';
 
 
-// assets
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+// // assets
+// import Visibility from '@material-ui/icons/Visibility';
+// import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 
 
@@ -58,6 +63,11 @@ const GetOwnerships = ({...others}) => {
     const [expanded, setExpanded] = useState(false);
     const [contribution, setContribution] = useState()
     const [loaded, setLoaded] = useState(false)
+    const [content, setContent] = useState("")
+
+    const [book, setBook] = useState();
+    const mdParser = new MarkdownIt(/* Markdown-it options */);
+
 
     const { id } = useParams()
 
@@ -79,6 +89,10 @@ const GetOwnerships = ({...others}) => {
       };
 
 
+    function handleEditorChange({ html, text }) {
+    setContent(text)
+    }
+
     
     const getBooks = async () => {
         const { data } = await axios.get(configData.API_SERVER + 'get-ownerships?bookid='+id, { headers: { Authorization: `${account.token}` } })
@@ -86,21 +100,37 @@ const GetOwnerships = ({...others}) => {
         
     };
 
-
-
-  
-
+    const getBook = async () => {
+        const { data } = await axios.get(configData.API_SERVER + 'get-book?book=' + id);
+        setBook(data['book']);
+        setLoaded(true)
+        };
+    
 
     useBeforeRender(() => getBooks(), []);
+    useBeforeRender(() => getBook(), []);
+
+
+
 
 
 
   return(
       <div> 
+          
+          {book && 
+          <div>
+              <h1>{book['title']}</h1>
+          <MdEditor style={{ height: '700px' }} renderHTML={text => mdParser.render(text)} onChange={handleEditorChange} defaultValue={book['body']} readOnly={true} view={{ menu: false, md: false, html: true }} canView={{fullScreen: true}}/>
+            </div>
+            }
+
           {books &&
           <div>
                 {books.map((book) => {
                 return (
+                    <>
+                    <h1>Contribution breakdown</h1>
                     <Accordion expanded={expanded === book.id} onChange={handleChange(book['id'])}>
                         <AccordionSummary
                             aria-controls="panel1bh-content"
@@ -114,7 +144,7 @@ const GetOwnerships = ({...others}) => {
                     </AccordionSummary>
 
                     </Accordion>
-                    
+                    </>
                 )
             })} </div> }
         

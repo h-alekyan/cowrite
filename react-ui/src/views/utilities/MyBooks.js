@@ -155,6 +155,8 @@ const MyBooks = ({...others}) => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const auth = urlParams.get('code')
+
+        console.log(auth)
         
 
         if (auth && (localStorage.getItem("GitHubAccessToken") === null)){
@@ -166,6 +168,7 @@ const MyBooks = ({...others}) => {
 
 
     const getGithubRepos = async () => {
+        console.log("exists")
         if (githubAuth !== undefined){
             console.log(githubAuth)
             const auth = 'BEARER ' + githubAuth

@@ -49,7 +49,7 @@ const Bookstore = () => {
                                       <CardMedia
                                         component="img"
                                         height="140"
-                                        image="https://i.ibb.co/qdGVYTF/david-clode-vb-3q-Ee3rg8-unsplash.jpg"
+                                        image={book['cover_image_url'] ? book['cover_image_url'] : "https://i.ibb.co/qdGVYTF/david-clode-vb-3q-Ee3rg8-unsplash.jpg"}
                                         alt="green iguana"
                                       />
                                       <CardContent>
