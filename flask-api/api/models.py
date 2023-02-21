@@ -186,6 +186,7 @@ class Book(db.Model):
     description = db.Column(db.Text())
     is_github = db.Column(db.String(32))
     github_repo_name = db.Column(db.String(32))
+    cover_image_url = db.Column(db.Text())
     date_created = db.Column(db.DateTime(), default=datetime.utcnow)
     author_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False, index=True)
     author = db.relationship('Users', backref='authored_books', foreign_keys=[author_id])
@@ -233,6 +234,7 @@ class Book(db.Model):
         cls_dict['body'] = self.body
         cls_dict['description'] = self.description
         cls_dict['author'] = self.author_id
+        cls_dict['cover_image_url'] = self.cover_image_url
 
         return cls_dict
 

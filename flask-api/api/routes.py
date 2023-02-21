@@ -661,6 +661,7 @@ class FetchFromGithub(Resource):
         print(auth)
         repo = req_data.get('repo')
         user = req_data.get('user')
+        image_url = None
 
 
         r = requests.get(f"https://api.github.com/repos/{user}/{repo}/readme", headers={
@@ -668,6 +669,15 @@ class FetchFromGithub(Resource):
              "Accept": "application/vnd.github+json"
 
         })
+
+        try:
+            image_url = requests.get(f"https://api.github.com/repos/{user}/{repo}/contents/cover.jpg", headers={
+                "Authorization": auth,
+                "Accept": "application/vnd.github+json"
+
+            }).json().get('download_url')
+        except:
+            print('failed')
 
         res = r.json()
 
@@ -679,9 +689,11 @@ class FetchFromGithub(Resource):
 
 
 
-        book = Book(title=_title, body = _body, description = _description, author_id = self.id)
+        book = Book(title=_title, body = _body, description = _description, cover_image_url = image_url, author_id = self.id)
 
         book.save()
+
+        print(book.cover_image_url)
 
         contributors = {}
         total_contributions = 0

@@ -66,12 +66,13 @@ const Bookpage= () => {
 
     return (
         <Card sx={{ maxWidth: 600 }}>
+            {book &&
         <CardMedia
           component="img"
           height="240"
-          image="https://i.ibb.co/qdGVYTF/david-clode-vb-3q-Ee3rg8-unsplash.jpg"
+          image={book['cover_image_url'] ? book['cover_image_url'] : "https://i.ibb.co/qdGVYTF/david-clode-vb-3q-Ee3rg8-unsplash.jpg"}
           alt="green iguana"
-        />
+        /> }
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {book && book["title"]}
