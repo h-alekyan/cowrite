@@ -127,10 +127,11 @@ const GetOwnerships = ({...others}) => {
 
           {books &&
           <div>
+               
+                    <h1>Contribution breakdown</h1>
                 {books.map((book) => {
                 return (
                     <>
-                    <h1>Contribution breakdown</h1>
                     <Accordion expanded={expanded === book.id} onChange={handleChange(book['id'])}>
                         <AccordionSummary
                             aria-controls="panel1bh-content"
