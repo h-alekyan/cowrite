@@ -7,6 +7,7 @@ from datetime import datetime, timezone, timedelta
 from email import header
 
 from functools import wraps
+from tabnanny import check
 
 from flask import request
 from flask_restx import Api, Resource, fields
@@ -729,9 +730,13 @@ class FetchFromGithub(Resource):
         
         for key in contributors.keys():
             print(key)
-            github_ownership = GithubOwnership(contributor_github_username=key, book_id = book.id, percentage = contributors[key])
-            print(github_ownership)
-            github_ownership.save()
+            if key == user:
+                 in_app_ownership = Ownership(contributor_id = self.id, book_id = book.id, percentage = contributors[key])
+                 in_app_ownership.save()
+            else:
+                github_ownership = GithubOwnership(contributor_github_username=key, book_id = book.id, percentage = contributors[key])
+                print(github_ownership)
+                github_ownership.save()
 
         
         return {"success": True, "response": contributors}, 200
@@ -741,7 +746,7 @@ class FetchFromGithub(Resource):
 @rest_api.route('/api/fetch-github-contributions')
 class FetchGithubOwnerships(Resource):
     """
-       Get the book from Github Repository
+       Fetches the contributions of a github user
     """
 
     
@@ -761,6 +766,13 @@ class FetchGithubOwnerships(Resource):
         print("USER OWNERSHIPS: ", user_ownerships)
 
         for ownership in user_ownerships:
+            author = Book.get_by_id_raw(ownership['book_id']).author_id
+            if self.id == author:
+                continue
+            check_ownership = Ownership.get_by_contributor_and_book_id(self.id, ownership['book_id'])
+            print(check_ownership, type(check_ownership))
+            if check_ownership is not None:
+                continue
             in_app_ownership = Ownership(contributor_id = self.id, book_id = ownership['book_id'], percentage = ownership['percentage'])
             in_app_ownership.save()
             contribution = Contribution(title = "GitHub Contribution", body = "This is the cummulative contribution of the user on the project. The body of the user's contributions can only be seen on the respective pull reqeusts on GitHub", book_id=ownership['book_id'], contributor_id =self.id, status = "fetched from github (approved)", description = "This contribution has been fetched from GitHub")

@@ -46,6 +46,7 @@ import { strengthColor, strengthIndicator } from '../../utils/password-strength'
 // assets
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { domMax } from 'framer-motion';
 
 // style constant
 const useStyles = makeStyles((theme) => ({
@@ -153,7 +154,9 @@ const ReviewContribution = ({...others}) => {
             setRes(diff.prettyHtml(diffres))
 
             const diff_raw = diff.main(body_raw, contr_raw)
-            const score = diff.levenshtein(diff_raw) / contr_raw.length
+            const distance = diff.levenshtein(diff_raw) / Math.max(book['body'].length, contribution['body'].length)
+            const contribution_portion = 1 - (book['body'].length / contr_raw.length)
+            const score = distance * contribution_portion
             setPercentage(score)
         }
     }, [loaded])
