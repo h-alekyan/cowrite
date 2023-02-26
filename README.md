@@ -1,27 +1,9 @@
-# [React Flask Authentication](https://blog.appseed.us/react-flask-authentication/)
+# Cowrite: Collaborative book writing 
 
-Open-source full-stack seed project that uses a `React UI` powered by a simple `Flask API Server`. **[React Flask Authentication](https://blog.appseed.us/react-flask-authentication/)** sample can be used to bootstrap fast a new project using a tested `development-ready` stack or simply for eLearning purposes by beginners. For newcomers, **React** is a popular Javascript library for coding user interfaces baked by Facebook and Flask is a leading web framework written in Python. 
 
-- 👉 [React Flask Authentication](https://react-flask-authentication.appseed-srv1.com/) - LIVE Demo
-- 👉 LIVE [Support](https://react-flask-authentication.appseed-srv1.com/) via [Discord](https://discord.gg/fZC6hup) - provided by AppSeed
 
-<br />
-
-## [Black Friday 2022](https://appseed.us) - `75%OFF`
-
-> The campaign is active until `30.NOV` and applies to all products and licenses.
-
-[![AppSeed - Black Friday 2022 Campaign, 75% OFF Discount (all products).](https://user-images.githubusercontent.com/51070104/201829599-9fe6bdd7-3f19-46f3-9115-962eeb13bf29.jpg)](https://appseed.us)
-
-<br />
 
 ## Quick-start in Docker
-
-> Clone/Download the source code
-
-```bash
-$ git clone  https://github.com/app-generator/react-flask-authentication.git
-```
 
 <br />
 
@@ -178,34 +160,10 @@ authorization: JWT_TOKEN (returned by Login request)
 }
 ```
 
-<br />
 
-## Product UI
-
-> React Flask Authentication - Login 
-
-![React Flask Authentication - Login.](https://user-images.githubusercontent.com/51070104/141444378-763ca3fb-c18c-4558-9730-b42a341a7b22.jpg)
 
 <br />
 
-> React Flask Authentication - Icons
-
-![React Flask Authentication - Icons.](https://user-images.githubusercontent.com/51070104/141444472-8c966396-69dc-46c3-835e-b64329fdbf7d.jpg)
-
-<br />
-
-> React Flask Authentication - Colors
-
-![React Flask Authentication - Colors.](https://user-images.githubusercontent.com/51070104/141444532-46a3bcd0-841b-4725-aa82-122569cd678a.jpg)
-
-<br />
-
-## Links & Resources
-
-- Ask for [Support](https://appseed.us/support) on [Discord](https://discord.gg/fZC6hup)
-- See for [React Starters](https://appseed.us/apps/react) - index provided by AppSeed
-
-<br />
-
+# Credits
 ---
 **[React Flask Authentication](https://blog.appseed.us/react-flask-authentication/)** - Open-source full-stack seed project provided by **AppSeed [App Generator](https://appseed.us/)**
