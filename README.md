@@ -115,54 +115,6 @@ const config = {
 
 <br />
 
-## API
-
-For a fast set up, this [POSTMAN](https://docs.appseed.us/boilerplate-code/api-server/api-unified-definition) definition can be used.
-
-> **Register** - `api/users/register` (**POST** request)
-
-```
-POST api/users/register
-Content-Type: application/json
-
-{
-    "username":"test",
-    "password":"pass", 
-    "email":"test@appseed.us"
-}
-```
-
-<br />
-
-> **Login** - `api/users/login` (**POST** request)
-
-```
-POST /api/users/login
-Content-Type: application/json
-
-{
-    "password":"pass", 
-    "email":"test@appseed.us"
-}
-```
-
-<br />
-
-> **Logout** - `api/users/logout` (**POST** request)
-
-```
-POST api/users/logout
-Content-Type: application/json
-authorization: JWT_TOKEN (returned by Login request)
-
-{
-    "token":"JWT_TOKEN"
-}
-```
-
-
-
-<br />
 
 # Credits
 ---
