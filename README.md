@@ -32,9 +32,6 @@ $ docker-compose up     # start the app
 Once all the above commands are executed, the `React UI` should be visible in the browser. By default, the app redirects the guest users to authenticate. 
 After we register a new user and signIN, all the private pages become accessible. 
 
-<br />
-
-![React Flask Authentication - Open-source full-stack seed project crafted by CodedThemes and AppSeed.](https://user-images.githubusercontent.com/51070104/137620059-07547eb2-0e7c-45e3-b825-67f5c72e4d3e.gif)
 
 <br />
 
