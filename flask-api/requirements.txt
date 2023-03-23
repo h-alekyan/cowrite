@@ -11,4 +11,5 @@ flask_migrate
 python-Levenshtein
 markupsafe==2.0.1
 requests
+psycopg2-binary 
 
