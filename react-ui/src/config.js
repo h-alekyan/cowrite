@@ -6,7 +6,7 @@ const config = {
     loggedInPath: '/my-books',
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 12,
-    API_SERVER: 'http://localhost:5001/api/'
+    API_SERVER: 'https://cowrite-api.herokuapp.com/api/'
 };
 
 export default config;
