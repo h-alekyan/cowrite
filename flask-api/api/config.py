@@ -7,11 +7,12 @@ import os
 from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+psql_uri = os.getenv('DATABASE_URL').replace('postgres', 'postgresql', 1) #Heroku gives us postrgres but our sqlalchemy recent update requires postgresql at the beginning, we use replace with 1 to replace only the first occurence since there is a chance the randomly generated letters inside the uri could also be postgres
 
 
 class BaseConfig():
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://vrneuyzjwfinnq:2002adb5d221902cd6a91b5f476f2a155954d1b73e5a6caa125295279ddcdfaa@ec2-3-234-204-26.compute-1.amazonaws.com:5432/dctq2hu23aecva'
+    SQLALCHEMY_DATABASE_URI = psql_uri
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "a14E25A6S7"
     JWT_SECRET_KEY = "ZU567JIk09JA"
