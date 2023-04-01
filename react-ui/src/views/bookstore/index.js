@@ -14,11 +14,9 @@ import MainCard from './../../ui-component/cards/MainCard';
 import SecondaryAction from './../../ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from './../../store/constant';
 import configData from '../../config';
-//===============================|| COLOR BOX ||===============================//
 
 
-
-//===============================|| UI COLOR ||===============================//
+//===============================|| BOOKSTORE ||===============================//
 
 const Bookstore = () => {
     const theme = useTheme();

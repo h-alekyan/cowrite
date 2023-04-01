@@ -14,14 +14,7 @@ export const dashboard = {
     title: 'Welcome!',
     type: 'group',
     children: [
-        // {
-        //     id: 'default',
-        //     title: 'Dashboard',
-        //     type: 'item',
-        //     url: '/dashboard/default',
-        //     icon: icons['IconDashboard'],
-        //     breadcrumbs: false
-        // }
+
     ]
 };
 

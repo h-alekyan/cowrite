@@ -58,30 +58,7 @@ export const outerLinks = {
             icon: icons['IconPalette'],
             breadcrumbs: false
         },
-        // {
-        //     id: 'util-typography',
-        //     title: 'Comedy',
-        //     type: 'item',
-        //     url: '/utils/util-typography',
-        //     icon: icons['IconTypography'],
-        //     breadcrumbs: false
-        // },
-        // {
-        //     id: 'util-color',
-        //     title: 'Science',
-        //     type: 'item',
-        //     url: '/utils/util-color',
-        //     icon: icons['IconPalette'],
-        //     breadcrumbs: false
-        // },
-        // {
-        //     id: 'util-shadow',
-        //     title: 'Romance',
-        //     type: 'item',
-        //     url: '/utils/util-shadow',
-        //     icon: icons['IconShadow'],
-        //     breadcrumbs: false
-        // },
+       
         
     ]
 };

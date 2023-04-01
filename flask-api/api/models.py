@@ -12,7 +12,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class GithubOwnership(db.Model):
+    """
+    Table that stores all ownerships fetched from github, we use it to later allow users to 
+    connect their github account and claim their ownership of any projects that are already on Cowrite
+    """
     id = db.Column(db.Integer(), primary_key=True)
     contributor_github_username = db.Column(db.Text(), nullable=False, index=True)
     book_id = db.Column(db.Integer(), db.ForeignKey('book.id'), nullable=False, index=True)
@@ -63,6 +68,9 @@ class GithubOwnership(db.Model):
 
 
 class Ownership(db.Model):
+    """
+    Table stores the User - Book Onwership data 
+    """
     id = db.Column(db.Integer(), primary_key=True)
     contributor_id = db.Column(db.Integer(),  db.ForeignKey('users.id'), nullable=False, index=True)
     contributor = db.relationship('Users', backref='ownerships', foreign_keys=[contributor_id])
@@ -108,6 +116,9 @@ class Ownership(db.Model):
 
 
 class Contribution(db.Model):
+    """
+    Table stores a given contribution that a user has made on a book
+    """
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.Text())
     description = db.Column(db.Text())
@@ -179,6 +190,9 @@ class Contribution(db.Model):
 
 
 class Book(db.Model):
+    """
+    Table stores Book data
+    """
     __tablename__ = 'book'
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(125), nullable=False)
@@ -246,6 +260,9 @@ class Book(db.Model):
 
 
 class Users(db.Model):
+    """
+    Table stores the User data
+    """
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(32), nullable=False)
