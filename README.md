@@ -2,8 +2,7 @@
 
 Cowrite is a collaborative book writing platform that handles important co-authoring tasks such as authorship credit calculation and distribution based on the level of contribution the author had. The Cowrite API along with the React UI allow the users to write books in a user-friendly markdown interface, submit contribution requests and even parse previously completed projects from github while sustaining the contribution metadata.
 
-Demo: https://cowrite-client.herokuapp.com/
-
+Currently the demo is disabled, see demo video here: https://www.loom.com/share/cd8e0ff0d572426c985d5ddc5d54cff2
 
 ## Quick-start in Docker
 
